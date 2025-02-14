@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Stock Price Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #3a3d98 0%, #00d2ff 100%);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            justify-content: space-between; /* Space between stock info and chart */
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1200px; /* Set max width for large screens */
+            padding: 20px;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 300px; /* Fixed width for stock info */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0078FF;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 500;
+            color: #444;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #0078FF;
+            outline: none;
+        }
+
+        .submit-btn {
+            background-color: #0078FF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #005bb5;
+        }
+
+        /* Stock Info */
+        .stock-info {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        .info-grid-row {
+            display: flex;
+            justify-content: space-between; /* Aligns items in the row */
+            margin-top: 10px;
+            align-items: center; /* Center items vertically */
+        }
+
+        .info-box {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            width: 48%; /* Make boxes take up half the width */
+        }
+
+        .info-box p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-box span {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0078FF;
+        }
+
+        /* Chart */
+        .chart-container {
+            margin-top: 4cm;
+            width: 60%; /* Wider width for the chart */
+        }
+
+        .chart-image {
+            width: 100%; /* Full width for responsiveness */
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            height: 12cm;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: red;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column; /* Stack items on smaller screens */
+                align-items: center;
+            }
+            .chart-container, .app-card {
+                width: 100%; /* Full width for both on small screens */
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="app-card">
+            <h1>📈 Indian Stock Price Tracker</h1>
+            <p class="subtitle">Get real-time stock prices and analysis for NSE stocks</p>
+
+            <form method="POST" class="form-group">
+                <label for="symbol" class="form-label">Enter Stock Symbol:</label>
+                <input type="text" id="symbol" name="symbol" class="input-field" required>
+
+                <label for="period" class="form-label">Select Time Period:</label>
+                <select id="period" name="period" class="input-field">
+                    <option value="1mo">1 Month</option>
+                    <option value="1y">1 Year</option>
+                </select>
+
+                <button type="submit" class="submit-btn">Get Stock Price</button>
+            </form>
+
+            {% if error %}
+                <div class="error-message">{{ error }}</div>
+            {% endif %}
+
+            {% if symbol %}
+                <div class="stock-info">
+                    <h2>Stock Information for {{ symbol }}:</h2>  <!-- Display Stock Symbol -->
+                    <!-- Display other stock data without closing price -->
+                    <div class="info-grid-row">
+                        <div class="info-box">
+                            <p>Day High: <span>₹{{ day_high }}</span></p>
+                        </div>
+                        <div class="info-box">
+                            <p>Day Low: <span>₹{{ day_low }}</span></p>
+                        </div>
+                    </div>
+                    <div class="info-grid-row">
+                        <div class="info-box">
+                            <p>Opening Price: <span>₹{{ opening_price }}</span></p>
+                        </div>
+                        <div class="info-box">
+                            <p>PE Ratio: <span>{{ pe_ratio }}</span></p>
+                        </div>
+                    </div>
+
+                    <p>Timestamp: <strong>{{ timestamp }}</strong></p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="chart-container">
+            {% if chart_path %}
+                <img src="{{ chart_path }}" alt="Stock Chart" class="chart-image">
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
